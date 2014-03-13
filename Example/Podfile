@@ -1,0 +1,7 @@
+pod "JFContext", :path => "../JFContext.podspec"
+
+target "Demo" do
+end
+
+target "DemoTests" do
+end
