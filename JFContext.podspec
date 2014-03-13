@@ -3,10 +3,7 @@ Pod::Spec.new do |s|
   s.version          = "0.1.0"
   s.summary          = "A short description of JFContext."
   s.description      = <<-DESC
-                       An optional longer description of JFContext
 
-                       * Markdown format.
-                       * Don't worry about the indent, we strip it!
                        DESC
   s.license          = 'MIT'
   s.author           = { "Denis Jajčević" => "denis.jajcevic@gmail.com" }
