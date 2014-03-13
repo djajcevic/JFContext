@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "JFContext"
-  s.version          = "0.1.1"
+  s.version          = "0.1.2"
   s.summary          = "Plist context loader util."
   s.description      = <<-DESC
                        Simple util to load 'beans' from plist configuration file.
