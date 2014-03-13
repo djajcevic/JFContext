@@ -1,8 +1,5 @@
 # JFContext
 
-[![Version](http://cocoapod-badges.herokuapp.com/v/JFContext/badge.png)](http://cocoadocs.org/docsets/JFContext)
-[![Platform](http://cocoapod-badges.herokuapp.com/p/JFContext/badge.png)](http://cocoadocs.org/docsets/JFContext)
-
 ## Usage
 
 To run the example project; clone the repo, and run `pod install` from the Example directory first.
