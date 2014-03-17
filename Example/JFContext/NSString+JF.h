@@ -1,6 +1,5 @@
 //
 //  NSString+JF.h
-//  Hattrick
 //
 //  Created by Denis Jajčević on 12/17/12.
 //  Copyright (c) 2012 JF. All rights reserved.
