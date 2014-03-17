@@ -6,9 +6,12 @@
 #import <Foundation/Foundation.h>
 
 @class JFServiceEndpoint;
+@class JFURLRequest;
 
 @interface JFContext (Test)
-- (JFServiceEndpoint *) googleService;
-- (JFServiceEndpoint *) googleService1;
-- (JFServiceEndpoint *) googleService2;
+- (JFServiceEndpoint *)testEndpoint;
+
+- (JFURLRequest *)testRequest;
+//- (JFServiceEndpoint *) googleService1;
+//- (JFServiceEndpoint *) googleService2;
 @end

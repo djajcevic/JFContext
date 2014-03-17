@@ -4,7 +4,6 @@
 //
 
 #import "JFContext+Test.h"
-#import "JFServiceEndpoint.h"
 
 
 @implementation JFContext (Test)

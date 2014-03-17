@@ -4,6 +4,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "NSString+JF.h"
 
 @class JFContext;
 
@@ -35,11 +36,14 @@
 #define kBundlePrefix @"bundle:"
 #define kSelectorPrefix @"sel:"
 #define kBooleanPrefix @"b:"
+#define kReferencePrefix @"ref:"
 
 #define kLocalizableKey @"Localizable"
 #define kClassKey @"class"
 #define kContextKey @"context"
 #define kPlistKey @"plist"
+#define kInitMethodKey @"initMethod"
+
 #define kLprojKey @"lproj"
 
 @interface JFContext : NSObject

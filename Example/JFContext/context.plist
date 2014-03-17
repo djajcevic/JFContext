@@ -4,49 +4,58 @@
     <dict>
         <key>beans</key>
         <dict>
-            <key>googleService</key>
+            <key>postEndpoint</key>
             <dict>
                 <key>class</key>
                 <string>JFServiceEndpoint</string>
                 <key>address</key>
-                <string>bundle:config:googleServiceEndpoint</string>
-                <key>method</key>
-                <string>GET</string>
-                <key>b:production</key>
-                <true/>
-            </dict>
-            <key>googleService1</key>
-            <dict>
-                <key>class</key>
-                <string>JFServiceEndpoint</string>
-                <key>address</key>
-                <string>googleServiceEndpoint</string>
-                <key>b:production</key>
-                <true/>
+                <string>bundle:config:testEndpoint</string>
                 <key>method</key>
                 <string>POST</string>
-                <key>params</key>
-                <dict>
-                    <key>firstParam</key>
-                    <string>test</string>
-                </dict>
+                <key>contentType</key>
+                <string>application/json</string>
             </dict>
-            <key>googleService2</key>
+            <key>testRequest</key>
             <dict>
                 <key>class</key>
-                <string>JFServiceEndpoint</string>
-                <key>address</key>
-                <string>bundle:services:googleServiceEndpoint</string>
-                <key>b:production</key>
-                <false/>
-                <key>method</key>
-                <string>POST</string>
-                <key>params</key>
-                <dict>
-                    <key>firstParam</key>
-                    <string>test</string>
-                </dict>
+                <string>JFURLRequest</string>
+                <key>ref:serviceEndpoint</key>
+                <string>postEndpoint</string>
+                <key>bodyPayload</key>
+                <string>{"test":"request"}</string>
             </dict>
+            <!--<key>googleService1</key>-->
+            <!--<dict>-->
+            <!--<key>class</key>-->
+            <!--<string>JFServiceEndpoint</string>-->
+            <!--<key>address</key>-->
+            <!--<string>googleServiceEndpoint</string>-->
+            <!--<key>b:production</key>-->
+            <!--<true/>-->
+            <!--<key>method</key>-->
+            <!--<string>POST</string>-->
+            <!--<key>params</key>-->
+            <!--<dict>-->
+            <!--<key>firstParam</key>-->
+            <!--<string>test</string>-->
+            <!--</dict>-->
+            <!--</dict>-->
+            <!--<key>googleService2</key>-->
+            <!--<dict>-->
+            <!--<key>class</key>-->
+            <!--<string>JFServiceEndpoint</string>-->
+            <!--<key>address</key>-->
+            <!--<string>bundle:services:googleServiceEndpoint</string>-->
+            <!--<key>b:production</key>-->
+            <!--<false/>-->
+            <!--<key>method</key>-->
+            <!--<string>POST</string>-->
+            <!--<key>params</key>-->
+            <!--<dict>-->
+            <!--<key>firstParam</key>-->
+            <!--<string>test</string>-->
+            <!--</dict>-->
+            <!--</dict>-->
         </dict>
     </dict>
 </plist>

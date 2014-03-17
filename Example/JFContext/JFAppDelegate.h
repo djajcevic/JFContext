@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "JFServiceEndpointAuthorizationDelegate.h"
 
-@interface JFAppDelegate : UIResponder <UIApplicationDelegate>
+@interface JFAppDelegate : UIResponder <UIApplicationDelegate, JFServiceEndpointAuthorizationDelegate>
 
-@property (strong, nonatomic) UIWindow *window;
+@property(strong, nonatomic) UIWindow *window;
 
 @end

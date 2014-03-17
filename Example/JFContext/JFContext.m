@@ -5,7 +5,6 @@
 
 #import "JFContext.h"
 
-
 @implementation JFContextBeanResolver
 
 - (id)beanNamed:(NSString *)name
@@ -30,64 +29,115 @@
     self.beanContext = [NSMutableDictionary new];
     for (NSString *key in self.beanContextDefinition) {
         NSDictionary *beanDictionary = self.beanContextDefinition[key];
-        [self initializeBeanNamed:key withDefinition:beanDictionary];
+        [self createBeanNamed:key withDefinition:beanDictionary];
+    }
+    for (NSString *beanName in self.beanContextDefinition) {
+        id           bean            = self.beanContext[beanName];
+        NSDictionary *beanDictionary = self.beanContextDefinition[beanName];
+        [self initializeBean:bean withName:beanName andDefinition:beanDictionary];
     }
 }
 
-- (void)initializeBeanNamed:(NSString *)name withDefinition:(NSDictionary *)dictionary
+- (void)createBeanNamed:(NSString *)name withDefinition:(NSDictionary *)dictionary
+{
+    id bean = self.beanContext[name];
+    if (bean) {
+        NSLog(@"Warning: bean named '%@' already in context. Skipping...", name);
+    }
+    else {
+        NSMutableDictionary *beanDefinition = [dictionary mutableCopy];
+
+        // get the class name from definition
+        Class    clazz              = NSClassFromString(beanDefinition[kClassKey]);
+        NSString *initMethod        = beanDefinition[kInitMethodKey];
+        SEL      customInitSelector = NSSelectorFromString(initMethod);
+        if ([initMethod length] && [clazz respondsToSelector:customInitSelector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+            bean = [clazz performSelector:customInitSelector];
+#pragma clang diagnostic pop
+        }
+        else {
+            bean = [clazz new];
+        }
+        // add bean to context
+        self.beanContext[name] = bean;
+    }
+}
+
+- (void)initializeBean:(id)bean withName:(NSString *)name andDefinition:(NSDictionary *)dictionary
 {
     if (dictionary == nil) {
         return;
     }
     NSMutableDictionary *beanDefinition = [dictionary mutableCopy];
+    // remove "class" and "initMethod" value so we can iterate through keys
+    [beanDefinition removeObjectForKey:kClassKey];
+    [beanDefinition removeObjectForKey:kInitMethodKey];
+    // initialize bean
+    if (bean) {
+        // iterate through remaining keys in bean definition
+        // NOTICE: keys are not ordered as defined in context configuration
+        for (NSString *key in beanDefinition) {
+            // get value from definition
+            id value = beanDefinition[key];
 
-    // get the class name from definition
-    Class clazz = NSClassFromString(beanDefinition[kClassKey]);
-    if (clazz != nil) {
-        // remove "class" value so we can iterate through keys
-        [beanDefinition removeObjectForKey:kClassKey];
-        // create bean
-        id bean = [clazz new];
-        if (bean) {
-            // add bean to context
-            self.beanContext[name] = bean;
-            // iterate through remaining keys in bean definition
-            // NOTICE: keys are not ordered as defined in context configuration
-            for (NSString *key in beanDefinition) {
-                // get value from definition
-                id value = beanDefinition[key];
+            // make a mutable copy so that we can modify the key
+            NSMutableString *mutableKey = [key mutableCopy];
 
-                // make a mutable copy so that we can modify the key
-                NSMutableString *mutableKey = [key mutableCopy];
+            // check if the key defines reference to another bean
+            if ([key hasPrefix:kReferencePrefix]) {
+                [self processReference:bean withBeanName:name value:value mutableKey:mutableKey];
+                continue;
+            }
 
-                // check if the key defines that the value is boolean
-                if ([key hasPrefix:kBooleanPrefix]) {
-                    [self processBoolean:bean value:value mutableKey:mutableKey];
-                    continue;
+            // check if the key defines that the value is boolean
+            if ([key hasPrefix:kBooleanPrefix]) {
+                [self processBoolean:bean value:value mutableKey:mutableKey];
+                continue;
+            }
+            if ([value isKindOfClass:[NSString class]]) {
+                // make a mutable copy of a string value
+                NSMutableString *mutableValue = [value mutableCopy];
+
+                // selector
+                if ([key hasPrefix:kSelectorPrefix]) {
+                    [self processSelector:bean value:value mutableKey:mutableKey];
                 }
-                if ([value isKindOfClass:[NSString class]]) {
-                    // make a mutable copy of a string value
-                    NSMutableString *mutableValue = [value mutableCopy];
-
-                    // selector
-                    if ([key hasPrefix:kSelectorPrefix]) {
-                        [self processSelector:bean value:value mutableKey:mutableKey];
-                    }
-                            // bundle value (string value)
-                    else if ([mutableValue hasPrefix:kBundlePrefix]) {
-                        [self processBundle:name bean:bean key:key value:value mutableValue:mutableValue];
-                    }
-                    else {
-                        [bean setValue:value forKeyPath:key];
-                    }
+                        // bundle value (string value)
+                else if ([mutableValue hasPrefix:kBundlePrefix]) {
+                    [self processBundle:name bean:bean key:key value:value mutableValue:mutableValue];
                 }
                 else {
                     [bean setValue:value forKeyPath:key];
                 }
             }
+            else {
+                [bean setValue:value forKeyPath:key];
+            }
         }
     }
+}
 
+- (void)processReference:(id)bean withBeanName:(NSString *)name value:(id)value
+              mutableKey:(NSMutableString *)propertyName
+{
+    [self prepareKey:propertyName prefix:kReferencePrefix];
+    NSString *referenceBeanName = value;
+    id       referenceBean      = self.beanContext[referenceBeanName];
+    if (!referenceBean) {
+        NSLog(@"Warning: reference bean '%@' for bean '%@' not found.", referenceBeanName, name);
+    }
+    else {
+        NSString *referenceSetter        = [NSString stringWithFormat:@"set%@:", [propertyName firstCapitalLetterString]];
+        SEL      referenceSetterSelector = NSSelectorFromString(referenceSetter);
+        if ([bean respondsToSelector:referenceSetterSelector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+            [bean performSelector:referenceSetterSelector withObject:referenceBean];
+#pragma clang diagnostic pop
+        }
+    }
 }
 
 - (void)processBundle:(NSString *)name bean:(id)bean key:(NSString *)key value:(id)value
@@ -126,7 +176,10 @@
     [self prepareKey:mutableKey prefix:kSelectorPrefix];
     SEL selector = NSSelectorFromString(mutableKey);
     if (selector != NULL && [bean respondsToSelector:selector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         [bean performSelector:selector withObject:value];
+#pragma clang diagnostic pop
     }
 }
 

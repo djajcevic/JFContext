@@ -7,15 +7,31 @@
 //
 
 #import "JFAppDelegate.h"
+#import "JFURLRequest.h"
+#import "JFContext+Test.h"
 
 @implementation JFAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+
+    JFURLRequest      *request         = [[JFContext instance] testRequest];
+    JFServiceEndpoint *serviceEndpoint = request.serviceEndpoint;
+    serviceEndpoint.authorizationDelegate = self;
+    [request invoke];
+
+    NSDictionary *dictionary = request.jsonResponseDictionary;
+
     return YES;
 }
-							
+
+- (NSString *)authorizationToken
+{
+    return @"auth";
+}
+
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

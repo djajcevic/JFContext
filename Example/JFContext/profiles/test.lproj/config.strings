@@ -1,2 +1,3 @@
 "googleServiceEndpoint"="http://www.google.hr";
 "someValue"="testValue";
+"testEndpoint"="https://www.test.com";

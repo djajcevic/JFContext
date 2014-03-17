@@ -13,13 +13,13 @@
 #ifdef __OBJC__
 
 #ifndef JF_ACTIVE_PROFILE
-#define JF_ACTIVE_PROFILE @"prod"
+#define JF_ACTIVE_PROFILE @"prod" // or any other
 #endif
 
 #import "JFContext.h"
 
 
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-    #import <UIKit/UIKit.h>
-    #import <Foundation/Foundation.h>
 #endif

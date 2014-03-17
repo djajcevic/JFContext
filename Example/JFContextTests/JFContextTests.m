@@ -34,10 +34,10 @@
 //    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
 
 //    NSString *string1 = [[JFContext bundleNamed:@"hr"] localizedStringForKey:@"test" value:@"" table:nil];
-    NSString *string2 = [[JFContext bundleNamed:@"en"] localizedStringForKey:@"test" value:@"" table:nil];
+    NSString          *string2  = [[JFContext bundleNamed:@"en"] localizedStringForKey:@"test" value:@"" table:nil];
 //    NSString *string3 = [[JFContext bundleNamed:@"hr"] localizedStringForKey:@"test" value:@"" table:nil];
 //    NSString *string4 = [[JFContext profileBundle] localizedStringForKey:@"googleServiceEndpoint" value:@"" table:kCONFIG_TABLE];
-    JFServiceEndpoint *service = [[JFContext instance] googleService];
+    JFServiceEndpoint *service  = [[JFContext instance] googleService];
     JFServiceEndpoint *service1 = [[JFContext instance] googleService1];
     JFServiceEndpoint *service2 = [[JFContext instance] googleService2];
 }
